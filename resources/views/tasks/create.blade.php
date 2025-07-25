@@ -1,50 +1,62 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h2 class="mb-4">✍️ Tambah Tugas Baru</h2>
+    <div class="container py-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="mb-4 text-success"><i class="bi bi-plus-circle-dotted me-2"></i>Tambah Tugas Baru</h2>
 
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <strong>Oops!</strong> Ada beberapa kesalahan.<br><br>
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <strong>Oops!</strong> Ada beberapa kesalahan:
+                        <ul class="mb-0 mt-2">
+                            @foreach ($errors->all() as $error)
+                                <li>⚠️ {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('tasks.store') }}" method="POST">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-semibold">📌 Judul Tugas</label>
+                        <input type="text" name="title" class="form-control shadow-sm"
+                            placeholder="Contoh: Belajar Laravel" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">📝 Deskripsi</label>
+                        <textarea name="description" class="form-control shadow-sm" rows="4" placeholder="Tambahkan detail tugas..."
+                            required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="priority" class="form-label fw-semibold">🎯 Prioritas</label>
+                        <select class="form-select shadow-sm" id="priority" name="priority" required>
+                            <option value="">-- Pilih Prioritas --</option>
+                            <option value="Low">Low 🟢</option>
+                            <option value="Medium">Medium 🟡</option>
+                            <option value="High">High 🔴</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="due_date" class="form-label fw-semibold">📅 Tanggal Tenggat</label>
+                        <input type="date" name="due_date" class="form-control shadow-sm" required>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left-circle me-1"></i> Kembali
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save2 me-1"></i> Simpan
+                        </button>
+                    </div>
+                </form>
             </div>
-        @endif
-
-        <form action="{{ route('tasks.store') }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="title" class="form-label">Judul Tugas</label>
-                <input type="text" name="title" class="form-control" placeholder="Contoh: Belajar Laravel" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="description" class="form-label">Deskripsi</label>
-                <textarea name="description" class="form-control" rows="4" placeholder="Tambahkan detail tugas..." required></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="priority" class="form-label">Tingkat Kepentingan</label>
-                <select class="form-select" id="priority" name="priority" required>
-                    <option value="">-- Tingkat Kepentingan --</option>
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                </select>
-            </div>
-
-
-            <div class="mb-3">
-                <label for="due_date" class="form-label">Tanggal Tenggat</label>
-                <input type="date" name="due_date" class="form-control" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">💾 Simpan</button>
-            <a href="{{ route('tasks.index') }}" class="btn btn-secondary">↩️ Kembali</a>
-        </form>
+        </div>
     </div>
 @endsection

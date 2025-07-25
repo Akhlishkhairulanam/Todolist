@@ -47,12 +47,14 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'required|in:High,Medium,Low',
+            'due_date' => 'required|date',
         ]);
 
         Task::create([
             'title' => $request->title,
             'description' => $request->description,
             'priority' => strtolower($request->priority),
+            'due_date' => $validated['due_date'],
         ]);
 
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil ditambahkan!');

@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
+
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">
-            <i class="bi bi-speedometer2 me-2"></i> Dashboard Tugas
+        <h2 class="fw-bold text-success">
+            <i class="bi bi-speedometer2 me-2"></i> Dashboard Task Akhlish.khai
         </h2>
-        <a href="{{ route('tasks.create') }}" class="btn btn-outline-success tambah-tugas-btn">
-            <i class="bi bi-plus-circle me-1"></i> Tambah Tugas
-        </a>
+
     </div>
 
     {{-- Search Bar --}}
@@ -26,13 +25,10 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- Keterangan --}}
-    <p class="text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i> Centang jika tugas selesai</p>
-
     {{-- Tabel Daftar Tugas --}}
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle">
-            <thead class="table-dark">
+        <table class="table table-bordered table-hover align-middle ">
+            <thead style="background-color: #A8D5BA;" class="text-dark">
                 <tr>
                     <th>Judul</th>
                     <th>Deskripsi</th>
@@ -43,7 +39,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($tasks as $task)
+                @forelse ($tasks as $task)
                     <tr>
                         <td class="{{ $task->completed ? 'text-decoration-line-through text-muted' : '' }}">
                             {{ $task->title }}
@@ -52,10 +48,7 @@
                             {{ $task->description }}
                         </td>
                         <td>
-                            @php
-                                $priority = strtolower($task->priority);
-                            @endphp
-
+                            @php $priority = strtolower($task->priority); @endphp
                             @if ($priority === 'low')
                                 <span class="badge bg-success">Low</span>
                             @elseif ($priority === 'medium')
@@ -67,8 +60,8 @@
                             @endif
                         </td>
                         <td>{{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}</td>
-                        <td>
-                            <form action="{{ route('tasks.toggleStatus', $task->id) }}" method="POST">
+                        <td class="text-center">
+                            <form action="{{ route('tasks.toggleStatus', $task->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('PATCH')
                                 <input type="checkbox" onchange="this.form.submit()"
@@ -76,44 +69,64 @@
                             </form>
                         </td>
                         <td>
-                            <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil-square"></i>
+                            <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning"
+                                title="Edit Tugas">
+                                <i class="fas fa-edit"></i>
                             </a>
                             <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-sm btn-danger"
+                                <button class="btn btn-sm btn-danger" title="Hapus Tugas"
                                     onclick="return confirm('Yakin ingin menghapus tugas ini?')">
-                                    <i class="bi bi-trash3"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
-                            @if ($tasks->isEmpty())
+                        </td>
+                    </tr>
+                @empty
                     <tr>
                         <td colspan="6" class="text-center text-muted">Tidak ada tugas yang tersedia.</td>
                     </tr>
-                @endif
-                </td>
-                </tr>
-                @endforeach
+                @endforelse
             </tbody>
         </table>
     </div>
 
-    <footer class="mt-5 text-center text-muted small">
-        <i class="bi bi-list-check me-1"></i> Dibuat dengan ❤️ oleh Akhlish.khai
-    </footer>
-
-
-    {{-- Tambahkan gaya tombol --}}
+    {{-- Tambahan efek --}}
     <style>
         .tambah-tugas-btn {
             transition: all 0.3s ease;
-            border: 2px solid #198754;
+            border: 2px solid #A8BDA3;
+            background-color: transparent;
+            color: #198754;
         }
 
         .tambah-tugas-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0.5rem 1rem rgba(25, 135, 84, 0.3);
+            background: #A8BDA3;
+            color: white;
+        }
+
+        .footer {
+            background-color: #328E6E;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
         }
     </style>
 @endsection
