@@ -17,7 +17,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('tasks.store') }}" method="POST">
+                <form action="{{ route('tasks.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-3">
@@ -46,6 +46,18 @@
                         <label for="due_date" class="form-label fw-semibold">📅 Tanggal Tenggat</label>
                         <input type="date" name="due_date" class="form-control shadow-sm" required>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">📷 Upload Gambar</label>
+                        <input type="file" name="gambar" class="form-control shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">📁 Upload File (PDF/DOC/DLL)</label>
+                        <input type="file" name="file" class="form-control shadow-sm"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.png,.jpg,.jpeg">
+                    </div>
+
+
 
                     <div class="d-flex justify-content-between mt-4">
                         <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">

@@ -17,7 +17,9 @@ return new class extends Migration
             $table->text('description');
             $table->boolean('completed')->default(false);
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
-            $table->date('due_date');
+            $table->date('due_date')->nullable();
+            $table->string('gambar')->nullable();
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

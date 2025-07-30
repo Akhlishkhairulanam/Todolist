@@ -35,6 +35,8 @@
                     <th>Prioritas</th>
                     <th>Tenggat Waktu</th>
                     <th>Status</th>
+                    <th>File</th>
+                    <th>Gambar</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -44,9 +46,10 @@
                         <td class="{{ $task->completed ? 'text-decoration-line-through text-muted' : '' }}">
                             {{ $task->title }}
                         </td>
+
                         <td class="{{ $task->completed ? 'text-decoration-line-through text-muted' : '' }}">
                             {{ $task->description }}
-                        </td>
+
                         <td>
                             @php $priority = strtolower($task->priority); @endphp
                             @if ($priority === 'low')
@@ -59,7 +62,9 @@
                                 <span class="badge bg-secondary">N/A</span>
                             @endif
                         </td>
+
                         <td>{{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}</td>
+
                         <td class="text-center">
                             <form action="{{ route('tasks.toggleStatus', $task->id) }}" method="POST" class="d-inline">
                                 @csrf
@@ -67,6 +72,32 @@
                                 <input type="checkbox" onchange="this.form.submit()"
                                     {{ $task->completed ? 'checked' : '' }}>
                             </form>
+                        </td>
+                        <td>
+                            @if ($task->file)
+                                @php
+                                    $ext = pathinfo($task->file, PATHINFO_EXTENSION);
+                                    $gambarExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                                @endphp
+
+                                @if (in_array(strtolower($ext), $gambarExts))
+                                    <img src="{{ asset('uploads/' . $task->file) }}" alt="Gambar Tugas"
+                                        style="max-width: 100px; height: auto;">
+                                @else
+                                    <a href="{{ asset('uploads/' . $task->file) }}"
+                                        target="_blank">{{ $task->file }}</a>
+                                @endif
+                            @else
+                                Tidak ada file
+                            @endif
+                        </td>
+                        <td>
+                            @if ($task->gambar)
+                                <img src="{{ asset('uploads/' . $task->gambar) }}" alt="Gambar"
+                                    style="max-width: 100px; height: auto;">
+                            @else
+                                Tidak ada gambar
+                            @endif
                         </td>
                         <td>
                             <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning"
@@ -85,7 +116,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted">Tidak ada tugas yang tersedia.</td>
+                        <td colspan="7" class="text-center text-muted">Tidak ada tugas yang tersedia.</td>
                     </tr>
                 @endforelse
             </tbody>

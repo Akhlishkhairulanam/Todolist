@@ -48,17 +48,37 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'priority' => 'required|in:High,Medium,Low',
             'due_date' => 'required|date',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg|max:5120',
         ]);
 
+        // Simpan file
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $fileName);
+            $validated['file'] = $fileName;
+        }
+        // Simpan image
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $filename);
+            $validated['gambar'] = $filename; // ✅ tambahkan ke array validated
+        }
+
         Task::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'priority' => strtolower($request->priority),
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'priority' => strtolower($validated['priority']),
             'due_date' => $validated['due_date'],
+            'file' => $validated['file'] ?? null,
+            'gambar' => $validated['gambar'] ?? null,
         ]);
 
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil ditambahkan!');
     }
+
 
 
     /**
@@ -88,18 +108,43 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'due_date' => 'required|date',
             'priority' => 'required|in:High,Medium,Low',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg|max:5120',
         ]);
+
+        // Simpan file
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $fileName);
+            $validated['file'] = $fileName;
+        }
+        if ($request->hasFile('gambar')) {
+            // 🔴 Hapus file lama jika ada
+            if ($task->gambar) {
+                $oldPath = public_path('uploads' . $task->gambar);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // ✅ Simpan file gambar baru
+            $file = $request->file('gambar');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads'), $filename);
+            $validated['gambar'] = $filename;
+        }
+
         $validated['priority'] = strtolower($validated['priority']);
         $task->update($validated);
 
         $task->is_completed = $request->has('is_completed') ? 1 : 0;
-
-        // Update status otomatis
         $task->status = $task->is_completed ? 'selesai' : 'belum';
         $task->save();
 
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil diperbarui!');
     }
+
 
 
     /**
@@ -112,6 +157,10 @@ class TaskController extends Controller
         if (!$task) {
             return redirect()->route('tasks.index')
                 ->with('error', 'Tugas tidak ditemukan!');
+        }
+
+        if ($task->image && file_exists(public_path('uploads/' . $task->image))) {
+            unlink(public_path('uploads/' . $task->image));
         }
 
         $task->delete();

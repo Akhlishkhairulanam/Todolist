@@ -45,6 +45,7 @@
                                     </small>
                                 </div>
                             </div>
+
                             <div class="d-flex gap-2">
                                 <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-sm btn-warning">✏️
                                     Edit</a>

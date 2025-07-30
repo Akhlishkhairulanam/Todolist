@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\UploadController;
 
 // Route ke halaman utama
 Route::get('/', function () {
@@ -31,11 +32,17 @@ Route::middleware(['auth'])->group(function () {
 
     // Hapus tugas
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-    // check box jika sudah selesai tugas nya
+
+    // Check box jika sudah selesai tugas nya
     Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggleStatus'])->name('tasks.toggle');
     Route::patch('/tasks/{task}/toggle-status', [TaskController::class, 'toggleStatus'])->name('tasks.toggleStatus');
+
+    // Upload file atau gambar
+    Route::get('/upload', [UploadController::class, 'create'])->name('upload.create');
+    Route::post('/upload', [UploadController::class, 'store'])->name('upload.store');
 });
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Redirect /home ke /tasks supaya tidak ambigu
+Route::get('/home', function () {
+    return redirect()->route('tasks.index');
+})->name('home');

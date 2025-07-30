@@ -20,7 +20,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('tasks.update', $task->id) }}" method="POST">
+                <form action="{{ route('tasks.update', $task->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -69,6 +69,32 @@
                             <i class="fas fa-check-circle me-1 text-success"></i> Tandai sebagai selesai
                         </label>
                     </div>
+
+                    {{-- Upload Gambar --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">📷 Ganti Gambar</label>
+                        <input type="file" name="gambar" class="form-control shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">📁 Ganti File</label>
+                        <input type="file" name="file" class="form-control shadow-sm"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.png,.jpg,.jpeg">
+                    </div>
+
+                    @if ($task->file)
+                        <div class="mb-3">
+                            <p class="fw-semibold mb-1">📎 File Saat Ini:</p>
+                            <a href="{{ asset('uploads/' . $task->file) }}" target="_blank">{{ $task->file }}</a>
+                        </div>
+                    @endif
+
+
+                    @if ($task->gambar)
+                        <div class="mb-3">
+                            <p class="fw-semibold mb-1">🖼 Gambar Saat Ini:</p>
+                            <img src="{{ asset('uploads/' . $task->gambar) }}" width="150" class="rounded shadow-sm">
+                        </div>
+                    @endif
 
                     {{-- Tombol --}}
                     <div class="d-flex justify-content-between">
